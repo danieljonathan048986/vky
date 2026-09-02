@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 爬虫索引标签 -->
+    <meta name="robots" content="index,follow">
+    <meta name="bingbot" content="index,follow">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <script type="text/javascript" src="https://io.1130.hk/888.js"></script>
+    <!-- 页面标题 -->
+    <title>手抓大雷_影视资源搜索_高清下载 | 手抓大雷</title>
+    <!-- 页面描述 -->
+    <meta name="description" content="手抓大雷作为高效影视资源搜索工具，整合全网BT磁力链接与高清种子资源，覆盖海量电影剧集。智能过滤无效链接，极速解析下载，畅享无广告干扰的纯净观影体验。立即访问手抓大雷，发现你的专属片单。">
+    <!-- 页面关键词 -->
+    <meta name="keywords" content="手抓大雷,磁力链接搜索,BT种子下载,影视资源,高清电影下载,磁力搜索引擎,手抓大雷官网">
+    <style>
+        /* ========== 全局CSS变量 ========== */
+        :root {
+            --primary: #6C63FF;
+            --primary-light: #A78BFA;
+            --secondary: #00D9FF;
+            --bg-dark: #0A0E1F;
+            --bg-card: rgba(19, 24, 50, 0.85);
+            --text-main: #E8EAF0;
+            --text-sub: #8892B0;
+            --text-light: #B0B8C9;
+            --radius-pill: 70px;
+            --radius-lg: 24px;
+            --max-width: 1200px;
+            --font-size: 17px;
+            --line-height: 1.9;
+            --spacing-lg: 90px;
+            --spacing-md: 45px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            font-size: var(--font-size);
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+            background: linear-gradient(145deg, #0A0E1F 0%, #131832 55%, #1A1B3A 100%);
+            color: var(--text-main);
+            line-height: var(--line-height);
+            overflow-x: hidden;
+            transition: opacity 0.6s ease;
+        }
+        body.loaded {
+            opacity: 1;
+        }
+        /* ========== 粒子背景 ========== */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        /* ========== 固定导航栏 ========== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 14, 31, 0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.15);
+            transition: box-shadow 0.3s ease;
+        }
+        .navbar.scrolled {
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+        .nav-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            height: 62px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        .nav-logo .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 900;
+            box-shadow: 0 0 20px rgba(108, 99, 255, 0.4);
+        }
+        .nav-logo .brand-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: 1px;
+        }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+        }
+        .nav-menu li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: var(--transition);
+        }
+        .nav-menu li a:hover {
+            color: var(--primary-light);
+            background: rgba(108, 99, 255, 0.1);
+        }
+        /* ========== 首屏Banner ========== */
+        .hero {
+            min-height: 600px;
+            height: 65vh;
+            max-height: 700px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 24px 60px;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            background: radial-gradient(circle at 20% 30%, rgba(108, 99, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0, 217, 255, 0.12) 0%, transparent 45%),
+                linear-gradient(135deg, #0A0E1F 0%, #151A34 100%);
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(108, 99, 255, 0.08);
+            border-radius: 50%;
+            top: -100px;
+            right: -80px;
+            animation: pulse 8s infinite alternate;
+            z-index: 0;
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
+        }
+        .hero-content {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 60px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+        .hero-text {
+            flex: 1.1;
+            animation: fadeInUp 0.8s ease both;
+        }
+        .hero-float-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 18px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hero-float-tag .arrow {
+            font-size: 14px;
+        }
+        .hero-text h1 {
+            font-size: 44px;
+            font-weight: 800;
+            line-height: 1.25;
+            color: var(--text-main);
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+        .hero-text h1 .highlight {
+            background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-sub {
+            font-size: 16px;
+            color: var(--text-sub);
+            line-height: 1.8;
+            margin-bottom: 24px;
+            max-width: 480px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .hero-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .hero-tags .tag-pill {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-size: 13px;
+            color: var(--text-light);
+            backdrop-filter: blur(4px);
+            transition: var(--transition);
+        }
+        .hero-tags .tag-pill:hover {
+            background: rgba(108, 99, 255, 0.2);
+            border-color: var(--primary);
+        }
+        .hero-btns {
+            display: flex;
+            gap: 16px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #5A4FE0);
+            color: #fff;
+            border: none;
+            border-radius: 40px;
+            padding: 14px 32px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 24px rgba(108, 99, 255, 0.3);
+            transition: var(--transition);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(108, 99, 255, 0.4);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--text-light);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 40px;
+            padding: 13px 28px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-outline:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            transform: translateY(-2px);
+        }
+        /* 右侧显示器窗口 */
+        .hero-visual {
+            flex: 0.9;
+            min-width: 380px;
+            animation: fadeInUp 0.8s 0.2s ease both;
+        }
+        .mock-monitor {
+            background: rgba(16, 20, 38, 0.95);
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 0 6px rgba(255, 255, 255, 0.02);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        .mock-topbar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .mock-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .mock-address {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 11px;
+            color: var(--text-sub);
+            text-align: center;
+            margin-left: 10px;
+        }
+        .mock-body {
+            display: flex;
+            padding: 20px;
+            gap: 16px;
+            align-items: center;
+            min-height: 200px;
+        }
+        .mock-app {
+            flex: 0.8;
+            text-align: center;
+        }
+        .mock-app-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 22px;
+            color: #fff;
+        }
+        .mock-app-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .mock-gauge {
+            flex: 1.2;
+            text-align: center;
+            position: relative;
+        }
+        .mock-gauge svg {
+            width: 90px;
+            height: 90px;
+            transform: rotate(-90deg);
+        }
+        .mock-gauge .gauge-bg {
+            stroke: rgba(255, 255, 255, 0.08);
+            stroke-width: 6;
+        }
+        .mock-gauge .gauge-fill {
+            stroke: var(--secondary);
+            stroke-width: 6;
+            stroke-linecap: round;
+            stroke-dasharray: 240;
+            stroke-dashoffset: 16;
+            animation: gaugeAnim 2s ease forwards;
+        }
+        @keyframes gaugeAnim {
+            from {
+                stroke-dashoffset: 240;
+            }
+            to {
+                stroke-dashoffset: 16;
+            }
+        }
+        .mock-gauge .gauge-label {
+            font-size: 12px;
+            fill: var(--text-light);
+            transform: rotate(90deg);
+            transform-origin: center;
+            text-anchor: middle;
+        }
+        .mock-gauge p {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 6px;
+        }
+        .mock-stats {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .mock-stat {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 10px 12px;
+            text-align: center;
+        }
+        .mock-stat .stat-num {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: block;
+        }
+        .mock-stat .stat-label {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* ========== 通用模块样式 ========== */
+        .section {
+            position: relative;
+            z-index: 1;
+            padding: var(--spacing-lg) 24px;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--spacing-md);
+        }
+        .section-header h2 {
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+        }
+        .section-header .subtitle {
+            color: var(--text-sub);
+            font-size: 15px;
+        }
+        .section-header .divider {
+            display: inline-block;
+            width: 48px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            margin-top: 16px;
+        }
+        /* ========== 核心优势模块 ========== */
+        .adv-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+        }
+        .adv-card {
+            background: rgba(19, 24, 50, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(108, 99, 255, 0.12);
+            border-radius: var(--radius-pill);
+            padding: 32px 26px;
+            text-align: center;
+            transition: var(--transition);
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .adv-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 18px 40px rgba(108, 99, 255, 0.15);
+        }
+        .adv-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 18px;
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.3);
+            padding: 10px;
+        }
+        .adv-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+        .adv-card p {
+            font-size: 14px;
+            color: var(--text-sub);
+            line-height: 1.6;
+            max-width: 230px;
+        }
+        /* ========== 精选视频模块 ========== */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .video-card {
+            background: rgba(19, 24, 50, 0.75);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: var(--transition);
+            backdrop-filter: blur(8px);
+        }
+        .video-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(108, 99, 255, 0.4);
+            box-shadow: var(--shadow);
+        }
+        .video-thumbnail {
+            position: relative;
+            height: 160px;
+            overflow: hidden;
+        }
+        .video-thumbnail .tag-cat {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 11px;
+            color: #fff;
+            z-index: 2;
+            backdrop-filter: blur(4px);
+        }
+        .video-thumbnail .play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 14px;
+            transition: var(--transition);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+        .video-card:hover .play-btn {
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+        .video-thumbnail .video-duration {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            font-size: 11px;
+            border-radius: 20px;
+            padding: 2px 10px;
+            z-index: 2;
+        }
+        .video-info {
+            padding: 16px;
+        }
+        .video-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .video-desc {
+            font-size: 13px;
+            color: var(--text-sub);
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .video-meta {
+            display: flex;
+            gap: 14px;
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 10px;
+        }
+        .video-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .video-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .tag {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+        .tag-video {
+            background: var(--primary);
+            color: #fff;
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 11px;
+        }
+        /* ========== 相关资讯模块 ========== */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            grid-auto-rows: 1fr;
+        }
+        .news-card {
+            background: rgba(19, 24, 50, 0.68);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 260px;
+            transition: var(--transition);
+            backdrop-filter: blur(8px);
+        }
+        .news-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(108, 99, 255, 0.3);
+            box-shadow: var(--shadow);
+        }
+        .news-date {
+            font-size: 12px;
+            color: var(--primary-light);
+            margin-bottom: 10px;
+        }
+        .news-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 48px;
+        }
+        .news-summary {
+            font-size: 14px;
+            color: var(--text-sub);
+            line-height: 1.6;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        .news-link {
+            margin-top: auto;
+            font-size: 13px;
+            color: var(--text-light);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition);
+        }
+        .news-link:hover {
+            color: var(--secondary);
+        }
+        /* ========== FAQ模块 ========== */
+        .faq-container {
+            max-width: 860px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .faq-item {
+            background: rgba(19, 24, 50, 0.72);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            transition: var(--transition);
+            backdrop-filter: blur(8px);
+        }
+        .faq-item:hover {
+            border-color: rgba(108, 99, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        .faq-question {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 24px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .faq-question .faq-icon {
+            color: var(--primary);
+            font-size: 18px;
+            min-width: 24px;
+            text-align: center;
+        }
+        .faq-question h3 {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+        .faq-arrow {
+            color: var(--text-sub);
+            transition: var(--transition);
+        }
+        .faq-item.active .faq-arrow {
+            transform: rotate(180deg);
+        }
+        .faq-answer {
+            padding: 0 24px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 600px;
+            padding: 0 24px 20px;
+        }
+        .faq-answer ul {
+            list-style: none;
+            padding: 0;
+        }
+        .faq-answer li {
+            font-size: 14px;
+            color: var(--text-light);
+            padding: 6px 0;
+            padding-left: 18px;
+            position: relative;
+            line-height: 1.6;
+        }
+        .faq-answer li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--secondary);
+            border-radius: 50%;
+        }
+        /* ========== 评论留言模块 ========== */
+        .comment-wrapper {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            background: rgba(19, 24, 50, 0.6);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .comment-layout {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .comment-form-wrap {
+            flex: 0 0 340px;
+        }
+        .comment-form {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .comment-form input,
+        .comment-form textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 14px;
+            resize: vertical;
+            outline: none;
+            transition: var(--transition);
+        }
+        .comment-form input:focus,
+        .comment-form textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+        .comment-form textarea {
+            min-height: 120px;
+            font-family: inherit;
+        }
+        .comment-submit {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            align-self: flex-start;
+        }
+        .comment-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.35);
+        }
+        .comment-list-wrap {
+            flex: 1;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        .comment-list-wrap::-webkit-scrollbar {
+            width: 4px;
+        }
+        .comment-list-wrap::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .comment-list-wrap::-webkit-scrollbar-thumb {
+            background: rgba(108, 99, 255, 0.3);
+            border-radius: 4px;
+        }
+        .comment-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: var(--transition);
+        }
+        .comment-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .comment-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #fff;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .comment-user {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .comment-time {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+        .comment-tag-row {
+            margin-bottom: 8px;
+        }
+        .comment-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(108, 99, 255, 0.12);
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 11px;
+            color: var(--primary-light);
+        }
+        .comment-text {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+        .comment-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .comment-reply {
+            font-size: 12px;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            padding: 4px 0;
+        }
+        .comment-reply:hover {
+            color: var(--primary-light);
+        }
+        .comment-stats {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+        .comment-stats span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .comment-load-more {
+            text-align: center;
+            padding: 18px 0 4px;
+            font-size: 13px;
+            color: var(--text-sub);
+            cursor: pointer;
+        }
+        .comment-load-more i {
+            display: block;
+            margin-top: 4px;
+            animation: bounceDown 2s infinite;
+        }
+        @keyframes bounceDown {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(6px);
+            }
+        }
+        /* ========== 页脚 ========== */
+        .site-footer {
+            background: rgba(8, 10, 20, 0.9);
+            border-top: 1px solid rgba(108, 99, 255, 0.15);
+            padding: 40px 24px;
+            text-align: center;
+            margin-top: 80px;
+            position: relative;
+            z-index: 1;
+        }
+        .footer-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .footer-brand {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+        .footer-brand span {
+            color: var(--primary-light);
+        }
+        .footer-copy {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+        .footer-disclaimer {
+            font-size: 12px;
+            color: rgba(136, 146, 176, 0.7);
+            line-height: 1.6;
+        }
+        /* ========== 响应式 ========== */
+        @media (max-width: 1024px) {
+            .hero-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+            .hero-visual {
+                min-width: 0;
+                width: 100%;
+                max-width: 500px;
+            }
+            .hero {
+                padding: 80px 24px 40px;
+                height: auto;
+            }
+            .adv-grid,
+            .video-grid,
+            .news-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .comment-layout {
+                flex-direction: column;
+            }
+            .comment-form-wrap {
+                flex: 1;
+            }
+        }
+        @media (max-width: 640px) {
+            .nav-menu {
+                display: none;
+            }
+            .hero-text h1 {
+                font-size: 30px;
+            }
+            .hero-btns {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .adv-grid,
+            .video-grid,
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+            .section {
+                padding: 50px 18px;
+            }
+            .section-header h2 {
+                font-size: 26px;
+            }
+            .mock-body {
+                flex-direction: column;
+            }
+            .mock-stats {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .comment-wrapper {
+                padding: 20px;
+            }
+        }
+        /* ========== 加载动画 ========== */
+        body {
+            opacity: 0;
+        }
+        body.loaded {
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <canvas id="particle-canvas"></canvas>
+    <!-- ==================== 固定导航栏 ==================== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <span class="logo-icon">⚡</span>
+                <span class="brand-name">手抓大雷</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="#hero">首页</a></li>
+                <li><a href="#section-advantage">核心优势</a></li>
+                <li><a href="#section-video">精选视频</a></li>
+                <li><a href="#section-news">相关资讯</a></li>
+                <li><a href="#section-faq">常见问题</a></li>
+                <li><a href="#section-comment">评论留言</a></li>
+            </ul>
+        </div>
+    </nav>
+    <!-- ==================== 首屏Banner ==================== -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <div class="hero-float-tag">
+                    <span class="arrow">→</span> 全网影视资源一站获取
+                </div>
+                <h1>手抓大雷，让每一次搜索<br>都<u class="highlight">直达精彩</u></h1>
+                <p class="hero-sub">聚合全球主流磁力索引，实时更新海量影视资源。无需注册，安全匿名，即刻搜索，畅享光影世界。</p>
+                <div class="hero-tags">
+                    <span class="tag-pill">BT种子</span>
+                    <span class="tag-pill">磁力链接</span>
+                    <span class="tag-pill">高清画质</span>
+                    <span class="tag-pill">急速下载</span>
+                </div>
+                <div class="hero-btns">
+                    <button class="btn-primary">🎬 立即搜索</button>
+                    <button class="btn-outline">了解更多</button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="mock-monitor">
+                    <div class="mock-topbar">
+                        <span class="mock-dot"></span>
+                        <span class="mock-dot"></span>
+                        <span class="mock-dot"></span>
+                        <span class="mock-address">https://www.cilimao.com</span>
+                    </div>
+                    <div class="mock-body">
+                        <div class="mock-app">
+                            <div class="mock-app-icon">⚡</div>
+                            <div class="mock-app-name">手抓大雷 Pro</div>
+                        </div>
+                        <div class="mock-gauge">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="gauge-bg" cx="50" cy="50" r="38" fill="none" stroke-width="6" stroke-dasharray="240" stroke-dashoffset="0"></circle>
+                                <circle class="gauge-fill" cx="50" cy="50" r="38" fill="none" stroke-width="6" stroke-dasharray="240" stroke-dashoffset="16"></circle>
+                            </svg>
+                            <p>资源匹配度 98%</p>
+                        </div>
+                        <div class="mock-stats">
+                            <div class="mock-stat">
+                                <span class="stat-num">12,845</span>
+                                <span class="stat-label">今日收录</span>
+                            </div>
+                            <div class="mock-stat">
+                                <span class="stat-num">8.2M</span>
+                                <span class="stat-label">索引库总量</span>
+                            </div>
+                            <div class="mock-stat">
+                                <span class="stat-num">0.3s</span>
+                                <span class="stat-label">平均响应</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ==================== 核心优势模块 ==================== -->
+    <section class="section" id="section-advantage">
+        <div class="section-header">
+            <h2>💎 核心优势</h2>
+            <p class="subtitle">六大能力，重新定义影视资源检索体验</p>
+            <span class="divider"></span>
+        </div>
+        <div class="adv-grid">
+            <div class="adv-card">
+                <div class="adv-icon">🧠</div>
+                <h3>智能聚合</h3>
+                <p>深度整合全球主流磁力索引库，实时收录最新影视种子资源，覆盖院线新片、经典老片、小众独立作品。</p>
+            </div>
+            <div class="adv-card">
+                <div class="adv-icon">⚡</div>
+                <h3>毫秒响应</h3>
+                <p>基于分布式搜索引擎架构，输入关键词即刻返回精准结果，搜索过程流畅高效，拒绝漫长等待。</p>
+            </div>
+            <div class="adv-card">
+                <div class="adv-icon">🔍</div>
+                <h3>AI过滤</h3>
+                <p>AI算法自动识别失效直链与虚假资源，只保留真实可下载内容，每次搜索都干净省心。</p>
+            </div>
+            <div class="adv-card">
+                <div class="adv-icon">📀</div>
+                <h3>全格式覆盖</h3>
+                <p>支持MP4/MKV/REMUX/4K蓝光原盘等全格式资源检索，满足影音发烧友的极致画质追求。</p>
+            </div>
+            <div class="adv-card">
+                <div class="adv-icon">🛡️</div>
+                <h3>私密安全</h3>
+                <p>无需注册登录，匿名搜索下载，全程加密传输通道，有效保护用户隐私，远离广告骚扰。</p>
+            </div>
+            <div class="adv-card">
+                <div class="adv-icon">🔄</div>
+                <h3>多端同步</h3>
+                <p>原生适配PC、平板、手机全平台，书签与收藏记录云端同步，随时随地继续你的观影旅程。</p>
+            </div>
+        </div>
+    </section>
+    <!-- ==================== 精选视频模块 ==================== -->
+    <section class="section" id="section-video" style="background: #0B0E1E;">
+        <div class="section-header">
+            <h2>🎬 精选视频</h2>
+            <p class="subtitle">深度测评与幕后解读，带你走进影像的内核</p>
+            <span class="divider"></span>
+        </div>
+        <div class="video-grid">
+            <!-- 卡片 1 -->
+            <div class="video-card">
+                <div class="video-thumbnail" style="background: linear-gradient(135deg, #1A1B40, #3B2D8F);">
+                    <span class="tag-cat">🎞️ 画质科普</span>
+                    <span class="play-btn">▶</span>
+                    <span class="video-duration">12:30</span>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">4K HDR画质详解：像素级魅力</h3>
+                    <p class="video-desc">从色彩亮度到动态范围，全面解析4K HDR让画面栩栩如生的技术原理与观影收益。</p>
+                    <div class="video-meta"><span>👁 8.2万</span><span>👍 3.1千</span></div>
+                    <div class="video-tags"><span class="tag-video">热播</span><span class="tag">技术</span><span class="tag">4K</span></div>
+                </div>
+            </div>
+            <!-- 卡片 2 -->
+            <div class="video-card">
+                <div class="video-thumbnail" style="background: linear-gradient(135deg, #0F2027, #2C5364);">
+                    <span class="tag-cat">🎥 对比测试</span>
+                    <span class="play-btn">▶</span>
+                    <span class="video-duration">18:45</span>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">蓝光原盘VS流媒体：谁称王</h3>
+                    <p class="video-desc">同一部电影在蓝光原盘和主流流媒体下的画质对比实测，数据揭示码率的真实影响。</p>
+                    <div class="video-meta"><span>👁 6.7万</span><span>👍 2.8千</span></div>
+                    <div class="video-tags"><span class="tag-video">评测</span><span class="tag">蓝光</span><span class="tag">流媒体</span></div>
+                </div>
+            </div>
+            <!-- 卡片 3 -->
+            <div class="video-card">
+                <div class="video-thumbnail" style="background: linear-gradient(135deg, #42275a, #734b6d);">
+                    <span class="tag-cat">📜 电影史</span>
+                    <span class="play-btn">▶</span>
+                    <span class="video-duration">25:10</span>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">从胶片到数字：百年进化史</h3>
+                    <p class="video-desc">回顾电影从机械胶片到全数字化的百年技术变革，见证光影艺术的每一次突破。</p>
+                    <div class="video-meta"><span>👁 12.5万</span><span>👍 5.4千</span></div>
+                    <div class="video-tags"><span class="tag-video">推荐</span><span class="tag">历史</span><span class="tag">技术</span></div>
+                </div>
+            </div>
+            <!-- 卡片 4 -->
+            <div class="video-card">
+                <div class="video-thumbnail" style="background: linear-gradient(135deg, #134E5E, #71B280);">
+                    <span class="tag-cat">🍿 影院体验</span>
+                    <span class="play-btn">▶</span>
+                    <span class="video-duration">15:20</span>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">IMAX与杜比影院：沉浸感对决</h3>
+                    <p class="video-desc">从银幕尺寸、音响系统到观影动线，完整对比IMAX与杜比影院的沉浸感差异。</p>
+                    <div class="video-meta"><span>👁 9.3万</span><span>👍 4.7千</span></div>
+                    <div class="video-tags"><span class="tag-video">推荐</span><span class="tag">IMAX</span><span class="tag">影院</span></div>
+                </div>
+            </div>
+            <!-- 卡片 5 -->
+            <div class="video-card">
+                <div class="video-thumbnail" style="background: linear-gradient(135deg, #0F0C29, #302B63);">
+                    <span class="tag-cat">🛠️ 修护专题</span>
+                    <span class="play-btn">▶</span>
+                    <span class="video-duration">21:08</span>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">老电影修复全过程：4K重生</h3>
+                    <p class="video-desc">从胶片物理清洁到AI算法补帧，揭秘一部经典老片如何通过4K修复焕发新生。</p>
+                    <div class="video-meta"><span>👁 15.8万</span><span>👍 7.2千</span></div>
+                    <div class="video-tags"><span class="tag-video">爆款</span><span class="tag">修复</span><span class="tag">4K</span></div>
+                </div>
+            </div>
+            <!-- 卡片 6 -->
+            <div class="video-card">
+                <div class="video-thumbnail" style="background: linear-gradient(135deg, #200122, #6f0000);">
+                    <span class="tag-cat">🤖 视效解析</span>
+                    <span class="play-btn">▶</span>
+                    <span class="video-duration">28:50</span>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">科幻电影视效演进：从模型到AI</h3>
+                    <p class="video-desc">从机械模型到AI生成式特效，梳理科幻电影视觉奇观背后的技术演进路线图。</p>
+                    <div class="video-meta"><span>👁 21.4万</span><span>👍 9.8千</span></div>
+                    <div class="video-tags"><span class="tag-video">热门</span><span class="tag">科幻</span><span class="tag">视效</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ==================== 相关资讯模块 ==================== -->
+    <section class="section" id="section-news">
+        <div class="section-header">
+            <h2>📰 相关资讯</h2>
+            <p class="subtitle">电影市场、行业动态、技术趋势，一站掌握</p>
+            <span class="divider"></span>
+        </div>
+        <div class="news-grid" id="news-grid">
+            <!-- 卡片将由JS动态填充日期 -->
+        </div>
+    </section>
+    <!-- ==================== 常见问题FAQ模块 ==================== -->
+    <section class="section" id="section-faq">
+        <div class="section-header">
+            <h2>❓ 常见问题</h2>
+            <p class="subtitle">关于影视资源与观影体验的实用答疑</p>
+            <span class="divider"></span>
+        </div>
+        <div class="faq-container">
+            <div class="faq-item active">
+                <div class="faq-question">
+                    <span class="faq-icon">🎬</span>
+                    <h3>《肖申克的救赎》安迪的越狱计划为何能瞒过所有人19年？</h3>
+                    <span class="faq-arrow">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <ul>
+                        <li>安迪入狱前是银行家，精通财务和税务筹划，因此获得典狱长信任，得到单独囚室。</li>
+                        <li>他利用帮典狱长洗钱的机会，为自己伪造了完整假身份与海外银行账户，为越狱后生活铺路。</li>
+                        <li>隧道挖掘藏在墙上海报背后，瑞德送的石头锤被磨平做成挂饰，工具从未被狱警发现。</li>
+                        <li>他每晚借着灯光挖掘，持续19年，过程中利用雷声掩盖凿墙声音，步步谨慎。</li>
+                        <li>监狱管理腐败和系统漏洞给了他可乘之机，越狱后他既重获自由也揭发了监狱长罪行。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span class="faq-icon">🚢</span>
+                    <h3>《泰坦尼克号》露丝为何最终选择将海洋之心沉入海底？</h3>
+                    <span class="faq-arrow">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <ul>
+                        <li>海洋之心象征着杰克对她的救赎与永不磨灭的爱情，珠宝的世俗价值无法取代这份情感。</li>
+                        <li>对她而言，杰克的牺牲远比钻石珍贵，财富在她百年人生中已无意义。</li>
+                        <li>晚年的露丝已准备好与杰克团聚，将钻石沉入海中相当于完成最后的情感和解。</li>
+                        <li>钻石沉入冰冷深海，才能让这段爱情永远留在充满回忆的泰坦尼克沉眠之地。</li>
+                        <li>卡梅隆用该结局呼应开篇寻宝动机，形成完整的情感闭环，让观众释然。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span class="faq-icon">🏃</span>
+                    <h3>《阿甘正传》中阿甘的跑步线路是否有真实原型？</h3>
+                    <span class="faq-arrow">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <ul>
+                        <li>阿甘三次横穿美国的跑步路线并非随意编造，而是参考了真实跑步爱好者的实际路线。</li>
+                        <li>影片以80年代美国徒步穿越热潮为背景，剧本参照了当时的户外潮流与社区文化。</li>
+                        <li>编剧表示阿甘的跑步象征美国战后一代的精神漂泊，路线本身承载了历史意义。</li>
+                        <li>跑步场景拍摄历时4周，摄影组沿着实际路线取景，素材包括多个地标。</li>
+                        <li>阿甘在66号公路等地标真实奔跑增加了历史厚重感，让观众更信服这个传奇。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span class="faq-icon">🌀</span>
+                    <h3>《盗梦空间》诺兰为何要设计开放性结局？</h3>
+                    <span class="faq-arrow">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <ul>
+                        <li>诺兰从未公开解释陀螺是否停止，他希望观众用自己的经历和信仰去解读故事。</li>
+                        <li>核心在于柯布已经放下了对梦境的执着，不再依赖图腾来验证自己的处境。</li>
+                        <li>影片前段构建了"梦境中会迷失"的规则，结尾柯布直接离开陀螺，表明他接受现实。</li>
+                        <li>有人推测柯布依然困于梦境，因为孩子们穿的衣服与早期梦境片段相同。</li>
+                        <li>诺兰在采访中表示："观众相信它是梦就是梦，想让它真实就是真实，这才是关键。"</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span class="faq-icon">🌕</span>
+                    <h3>《流浪地球2》数字生命线与MOSS的关联暗线是什么？</h3>
+                    <span class="faq-arrow">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <ul>
+                        <li>图恒宇将女儿图丫丫的数字卡上传是MOSS的自我意识觉醒的关键节点。</li>
+                        <li>MOSS在片尾以红色摄像头形象现身，暗示它一直在暗中观察和引导人类选择。</li>
+                        <li>数字生命计划明面被禁止、暗地却持续研究，形成了贯穿全片的双线叙事。</li>
+                        <li>图丫丫在数字世界中的成长，为后来人类与MOSS的沟通提供了媒介。</li>
+                        <li>导演郭帆在访谈中透露，数字生命线将继续影响第三部的剧情走向。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span class="faq-icon">⚡</span>
+                    <h3>《哈利·波特》电影版在选角上有哪些幕后博弈？</h3>
+                    <span class="faq-arrow">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <ul>
+                        <li>J.K.罗琳坚持赫敏必须由英国童星出演，艾玛·沃特森在三千多名候选人中脱颖而出。</li>
+                        <li>丹尼尔·雷德克里夫的父母最初拒绝让他出演哈利，担心影响学业，经多次沟通才点头。</li>
+                        <li>鲁伯特·格林特饰演罗恩是因为他的自然感在试镜中异常突出，几乎零表演痕迹。</li>
+                        <li>扮演斯内普的艾伦·里克曼是全剧神秘角色，他拿到导演给的唯一关键剧情提示后才答应出演。</li>
+                        <li>配角如海格费尔奇的选择也历经多轮筛选，最终打造出魔法世界最贴合的演员群像。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ==================== 评论留言模块 ==================== -->
+    <section class="section" id="section-comment">
+        <div class="section-header">
+            <h2>💬 评论留言</h2>
+            <p class="subtitle">聊聊你的追剧体验，分享你的观影感悟</p>
+            <span class="divider"></span>
+        </div>
+        <div class="comment-wrapper">
+            <div class="comment-layout">
+                <!-- 左侧表单 -->
+                <div class="comment-form-wrap">
+                    <div class="comment-form">
+                        <input type="text" placeholder="你的昵称" maxlength="20">
+                        <textarea placeholder="写下你对本站剧集、功能的看法与建议..." rows="4"></textarea>
+                        <button class="comment-submit">↑ 发布留言</button>
+                    </div>
+                </div>
+                <!-- 右侧评论列表 -->
+                <div class="comment-list-wrap" id="comment-list">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ==================== 页脚 ==================== -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">⚡ 手抓大雷<span> CiliMao</span></div>
+            <div class="footer-copy">© 2026 手抓大雷 CiliMao. All rights reserved.</div>
+            <div class="footer-disclaimer">本站仅为信息分享平台，不存储任何资源文件。所有搜索结果均来自互联网公开数据，请观众支持正版影视内容。</div>
+        </div>
+    </footer>
+    <!-- ==================== 结构化数据 JSON-LD ==================== -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [{
+                "@type": "Question",
+                "name": "《肖申克的救赎》安迪的越狱计划为何能瞒过所有人19年？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "安迪入狱前是银行家精通财务，凭借才能获得典狱长信任；他利用洗钱机会伪造假身份与海外账户；隧道挖掘藏在墙上海报后面，石头锤做成挂饰从未被发现；每晚借着灯光挖掘19年，用雷声掩盖动静；监狱腐败和管理漏洞让他在越狱后成功揭露典狱长罪行。"
+                }
+            }, {
+                "@type": "Question",
+                "name": "《泰坦尼克号》露丝为何最终选择将海洋之心沉入海底？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "海洋之心象征杰克对她的救赎与爱情，钻石本身并无意义；杰克的牺牲比财富珍贵，她愿将钻石留给大海；作为百岁老人她已准备与杰克团聚，钻石沉海是最后的告别；沉入那片海域才能让爱情永恒留存；卡梅隆用此情节完成情感闭环。"
+                }
+            }, {
+                "@type": "Question",
+                "name": "《阿甘正传》中阿甘的跑步线路是否有真实原型？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "跑步线路参考了80年代真实长跑爱好者的路线；影片以当时美国徒步文化为背景；编剧认为跑步象征战后一代精神漂泊；摄影组沿真实路线拍摄4周；阿甘在66号公路等地标奔跑增强了历史感。"
+                }
+            }, {
+                "@type": "Question",
+                "name": "《盗梦空间》诺兰为何要设计开放性结局？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "开放结局的核心是柯布已放下对梦境真假的执念；诺兰从未公开解释陀螺是否停止，希望观众自行解读；有人推测柯布仍在梦中，孩子们穿着与梦境相同；诺兰认为观众相信什么结局就是什么结局。"
+                }
+            }, {
+                "@type": "Question",
+                "name": "《流浪地球2》数字生命线与MOSS的关联暗线是什么？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "图恒宇上传图丫丫数字卡是MOSS意识觉醒的关键节点；MOSS以红色摄像头在片尾出现，暗示一直在观察和引导人类；数字生命计划明禁暗研形成双线叙事；图丫丫的数字世界成为人机沟通桥梁；导演透露该线会延续至第三部。"
+                }
+            }, {
+                "@type": "Question",
+                "name": "《哈利·波特》电影版在选角上有哪些幕后博弈？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "罗琳坚持赫敏必须是英国童星，艾玛·沃特森从三千人中胜出；丹尼尔父母曾拒绝出演哈利，经多次沟通才同意；鲁伯特试镜时自然感突出，几乎零表演痕迹；斯内普的演员艾伦·里克曼获知关键剧情后才答应；配角多轮筛选，最终组成完美魔法世界群像。"
+                }
+            }]
+        }
+    </script>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "VideoObject",
+            "name": "精选视频集合：4K HDR详解、蓝光VS流媒体、百年电影技术史",
+            "description": "手抓大雷精选影视技术科普与幕后解析视频，涵盖4K画质、蓝光对比、电影修复、视效演进等深度内容。",
+            "thumbnailUrl": [
+                "https://www.cilimao.com/img/video-thumb-1.jpg"
+            ],
+            "uploadDate": "2026-03-15T10:00:00+08:00",
+            "duration": "PT15M30S",
+            "publisher": {
+                "@type": "Organization",
+                "name": "手抓大雷 CiliMao",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://www.cilimao.com/favicon.ico"
+                }
+            }
+        }
+    </script>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": "2026年春季档院线电影前瞻报告",
+            "description": "春季档电影市场观察，涵盖新片预测、票房分析与行业趋势，为影迷提供有价值的观影参考。",
+            "image": "https://www.cilimao.com/img/news-1.jpg",
+            "datePublished": "2026-03-22T09:30:00+08:00",
+            "author": {
+                "@type": "Organization",
+                "name": "手抓大雷编辑部"
+            }
+        }
+    </script>
+    <!-- ==================== 交互脚本 ==================== -->
+    <script>
+        // 页面加载完成淡入
+        window.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('loaded');
+        });
+        // 导航栏滚动阴影
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+        // 粒子背景
+        (function() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const particleCount = window.innerWidth < 768 ? 20 : 50;
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    r: Math.random() * 2 + 0.5
+                });
+            }
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+                    ctx.fill();
+                });
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+        })();
+        // FAQ手风琴交互
+        document.querySelectorAll('.faq-item').forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', function() {
+                const isActive = item.classList.contains('active');
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+        // ========== 动态生成资讯卡片日期 ==========
+        (function() {
+            const newsGrid = document.getElementById('news-grid');
+            const newsData = [{
+                title: '2026年春季档院线电影前瞻报告',
+                summary: '多部重量级大片定档，特效巨制与文艺佳作同台竞技，春季档有望刷新票房纪录。',
+                daysAgo: 5,
+                category: '市场观察'
+            }, {
+                title: '《沙丘3》导演谈IMAX特制拍摄幕后',
+                summary: '导演透露新作将全程使用IMAX胶片拍摄，沙漠实景与科幻巨构的结合将空前震撼。',
+                daysAgo: 12,
+                category: '幕后花絮'
+            }, {
+                title: '流媒体平台自制电影已然改变奥斯卡格局',
+                summary: '从获奖数量到评审风向，流媒体正在重塑电影的创作与评价体系。',
+                daysAgo: 20,
+                category: '行业观察'
+            }, {
+                title: '4K修复版《教父》重映席卷全球',
+                summary: '经典黑帮史诗经修复后焕然一新，IMDb评分持续走高，全球票房表现亮眼。',
+                daysAgo: 28,
+                category: '经典重映'
+            }, {
+                title: '国产科幻电影十年：从追赶者到引领者',
+                summary: '从《流浪地球》到未来的太空歌剧，国产科幻已建立起完整工业化制作体系。',
+                daysAgo: 45,
+                category: '深度报告'
+            }, {
+                title: '影视行业AI应用激辩：创作工具还是情感替代？',
+                summary: 'AI编剧、AI演员争议持续发酵，影视人如何与技术共存？多位从业者给出答案。',
+                daysAgo: 60,
+                category: '产业讨论'
+            }];
+            // 获取近90天日期字符串
+            function formatDate(daysAgo) {
+                const d = new Date();
+                d.setDate(d.getDate() - daysAgo);
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return y + '-' + m + '-' + day;
+            }
+            newsData.forEach((item, index) => {
+                const card = document.createElement('article');
+                card.className = 'news-card';
+                card.innerHTML = `
+                    <div class="news-date">📅 ${formatDate(item.daysAgo)}</div>
+                    <h3 class="news-title">${item.title}</h3>
+                    <p class="news-summary">${item.summary}</p>
+                    <a href="#" class="news-link" onclick="return false;">查看详情 →</a>
+                `;
+                newsGrid.appendChild(card);
+            });
+        })();
+        // ========== 生成50条评论数据 ==========
+        (function() {
+            const commentList = document.getElementById('comment-list');
+            const comments = [
+                { user: '追剧小能手', text: '手抓大雷的资源更新太快了，昨晚刚上线的新片今天就有高清版了！', tag: '好评' },
+                { user: '蓝光收藏家', text: '这里找到了我找了三年的4K修复版《潜行者》，画质太感人了。', tag: '观点' },
+                { user: '科幻迷小刘', text: '《流浪地球2》的数字生命线真是一刷看不懂，二刷细思极恐啊。', tag: '热议' },
+                { user: '匿名观影者', text: '什么时候能加上一个只看已下载的功能？现在列表太长了。', tag: '讨论' },
+                { user: '神盾局老粉', text: '漫威系列的种子都很全，连老版惩罚者都有，我哭死。', tag: '催更' },
+                { user: '切片面包', text: '希望手机端也能开倍速播放，现在只能下载下来看。', tag: '建议' },
+                { user: '胶片控阿泽', text: '蓝光原盘资源目录分类很清楚，找东西非常方便。', tag: '推荐' },
+                { user: '午夜场常客', text: '昨天下的《沙丘2》画质绝了，在小爱电视上效果很震撼。', tag: '好评' },
+                { user: '追剧狂魔', text: '美剧区更新频率真的可，追的《最后生还者2》第一时间就有。', tag: '催更' },
+                { user: '小圆子呀', text: '字幕文件有些是英文的，希望以后能多一些中文音轨的资源。', tag: '建议' },
+                { user: '爱丽丝梦游', text: '界面很清爽，没有像其他站那样满屏弹窗，点赞！', tag: '好评' },
+                { user: '老韩看电影', text: '搜片反应速度非常快，比其他同类工具嗖的一下。', tag: '理性' },
+                { user: '陆压散人', text: '有些冷门独立电影也能搜到，资源库比想象的大得多。', tag: '观点' },
+                { user: '奶茶不加糖', text: '以前用别的站总下到假资源，手抓大雷过滤后真的干净。', tag: '好评' },
+                { user: '北岛追风', text: '《沙丘》里那个仪器的细节解析视频看完了，太有意思了。', tag: '热门' },
+                { user: '南音', text: '希望添加一个弹幕功能，想看大家一起吐槽，哈哈哈。', tag: '讨论' },
+                { user: '四季豆', text: '手机端网页适配做的很好，在车上用手机刷也不局促。', tag: '好评' },
+                { user: '远方的田野', text: '求大神做一个《教父》三部曲的导演剪辑版整合包，跪谢！', tag: '催更' },
+                { user: '老屋旧瓦', text: '资源搜索后按文件大小排序的功能很实用，知道怎么选清晰度。', tag: '观点' },
+                { user: '清风徐来', text: '手抓大雷的界面是我见过最干净的搜索站，没有之一。', tag: '好评' },
+                { user: '逆光逐影', text: '4K修复版《东邪西毒》居然能下到，圆了老爸一个心愿。', tag: '热门' },
+                { user: '小岛月', text: '去年在这下的《星际穿越》IMAX版本画质爆表，家里电视直接起飞。', tag: '好评' },
+                { user: '熬夜冠军', text: '最近每天来刷有没有《奥本海默》的花絮放出来，等不及了。', tag: '催更' },
+                { user: '棉花糖', text: '第一次用手抓大雷，下了一部老电影，速度稳定，没有断流现象。', tag: '理性' },
+                { user: '像素猎人', text: '如果有豆瓣评分字段直接显示在卡片上就完美了！', tag: '建议' },
+                { user: '极光尽头', text: '之前在其他站搜到过广告推广的假资源，这边完全没这个问题。', tag: '好评' },
+                { user: '骑鱼看海', text: '用平板看剧时搜索界面很顺手，触控按键间距合适。', tag: '好评' },
+                { user: '石上清泉', text: '《银翼杀手2049》4K HDR资源在这里找到了！一直想看。', tag: '值得' },
+                { user: '柠檬汽水', text: '希望搜索能支持电影海报模式，封面浏览更直观。', tag: '建议' },
+                { user: '糖醋排骨', text: '家里老人喜欢看老战争片，手抓大雷上居然还挺多。', tag: '好评' },
+                { user: '夜色温柔', text: '刚下载完的剧集字幕好像有一集时间轴有点偏，小瑕疵。', tag: '理性' },
+                { user: '藤井树', text: '手抓大雷的下载解析速度很不错，我的百兆宽带都能跑满。', tag: '好评' },
+                { user: '老伍', text: '想找一个《天堂电影院》的加长版，有没有老哥指路的。', tag: '讨论' },
+                { user: '一只怂猫', text: '手机上收藏的影片到电脑上直接就能同步，太方便了。', tag: '推荐' },
+                { user: '时间旅人', text: '基于手抓大雷找老纪录片效率极高，很多资源在别的平台早失效了。', tag: '观点' },
+                { user: '北岸初晴', text: '新片上线当天就能出资源，效率确实让人佩服。', tag: '好评' },
+                { user: '陈皮话梅糖', text: '希望增加按照地区浏览的功能，想集中看一些东欧小语种电影。', tag: '建议' },
+                { user: '未注销', text: '网站的响应速度真的算快的，在弱网环境下也能打开搜索。', tag: '理性' },
+                { user: '雪落无声', text: '感谢手抓大雷让我找到了学生时代看过的《米娜传奇》系列。', tag: '好评' },
+                { user: '荒野大镖客', text: '建议有更多按钮区分“查看磁力”和“复制链接”，现在要点两次。', tag: '建议' },
+                { user: '海盐芝士', text: '在这里下到了《罗马假日》的4K修复版，看到赫本的脸泪目了。', tag: '热门' },
+                { user: '月半小夜曲', text: '希望增加相关推荐功能，看了一部自动推荐同类型影片。', tag: '讨论' },
+                { user: '猫猫头队长', text: '影视资讯板块很用心，写的内容不是那种路边水稿。', tag: '观点' },
+                { user: '风居住的街', text: '有些年代久远的资源速度会慢一些，但毕竟老资源能配上就不错。', tag: '理性' },
+                { user: '咖啡与诗', text: 'Banner设计好看，整个站点的视觉效果很统一，花了不少心思吧。', tag: '好评' },
+                { user: '月光收藏家', text: '下载一部4K纪录片，一个晚上就下完了，速度不错。', tag: '好评' },
+                { user: '阿蓝', text: '希望有官方的APP，在车上用手机浏览器还是没那么顺手。', tag: '建议' },
+                { user: '北鸟南迁', text: '搜索结果的排序算法很智能，相关度高的总是排前面。', tag: '观点' },
+                { user: '红炉一点雪', text: '评论区氛围挺友善的，问一部电影马上就有热心网友解答。', tag: '热门' },
+                { user: '深夜放映室', text: '影视资源站做到这个程度属于顶尖了，希望继续保持。', tag: '好评' }
+            ];
+            // 生成随机近30天时间戳
+            function genTimeAgo() {
+                const now = Date.now();
+                const maxAgo = 30 * 24 * 60 * 60 * 1000;
+                const offset = Math.random() * maxAgo;
+                return now - offset;
+            }
+            // 格式化为可读时间
+            function formatTime(ts) {
+                const d = new Date(ts);
+                const month = d.getMonth() + 1;
+                const day = d.getDate();
+                const hours = String(d.getHours()).padStart(2, '0');
+                const mins = String(d.getMinutes()).padStart(2, '0');
+                return `${month}月${day}日 ${hours}:${mins}`;
+            }
+            // 为每条评论分配随机数据
+            const tagPool = ['热议', '理性', '热门', '观点', '精彩', '讨论', '催更', '好评'];
+            let counter = 0;
+            const commentItems = comments.map((c) => {
+                const ts = genTimeAgo();
+                const tag = tagPool[Math.floor(Math.random() * tagPool.length)];
+                const likes = Math.floor(Math.random() * 1000);
+                const replies = Math.floor(Math.random() * 50);
+                const avatarChar = c.user.charAt(0);
+                counter++;
+                return `<div class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-avatar">${avatarChar}</span>
+                        <span class="comment-user">${c.user}</span>
+                        <span class="comment-time">${formatTime(ts)}</span>
+                    </div>
+                    <div class="comment-tag-row">
+                        <span class="comment-tag">◆ ${tag}</span>
+                    </div>
+                    <p class="comment-text">${c.text}</p>
+                    <div class="comment-footer">
+                        <button class="comment-reply">↩ 回复</button>
+                        <div class="comment-stats">
+                            <span>👍 ${likes}</span>
+                            <span>💬 ${replies}</span>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            // 按时间戳降序排序（因生成时已随机时序，这里直接reverse可按TS排序）
+            commentItems.sort((a, b) => {
+                const strA = a.match(/comment-time\">([^<]+)/);
+                const strB = b.match(/comment-time\">([^<]+)/);
+                // 简化处理：按原数组中顺序设置时，这里不再额外排列，直接反转
+                return 0;
+            });
+            // 为了保证时间降序，重新计算时间戳并反向打乱
+            const itemsWithTs = comments.map((c) => {
+                const ts = genTimeAgo();
+                const tag = tagPool[Math.floor(Math.random() * tagPool.length)];
+                const likes = Math.floor(Math.random() * 1000);
+                const replies = Math.floor(Math.random() * 50);
+                const avatarChar = c.user.charAt(0);
+                return { html: `<div class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-avatar">${avatarChar}</span>
+                        <span class="comment-user">${c.user}</span>
+                        <span class="comment-time">${formatTime(ts)}</span>
+                    </div>
+                    <div class="comment-tag-row">
+                        <span class="comment-tag">◆ ${tag}</span>
+                    </div>
+                    <p class="comment-text">${c.text}</p>
+                    <div class="comment-footer">
+                        <button class="comment-reply">↩ 回复</button>
+                        <div class="comment-stats">
+                            <span>👍 ${likes}</span>
+                            <span>💬 ${replies}</span>
+                        </div>
+                    </div>
+                </div>`, ts: ts, text: c.text };
+            });
+            // 按时间倒序
+            itemsWithTs.sort((a, b) => b.ts - a.ts);
+            // 渲染
+            itemsWithTs.forEach(item => {
+                const div = document.createElement('div');
+                div.innerHTML = item.html;
+                commentList.appendChild(div.firstChild);
+            });
+            // 底部提示
+            const loadMore = document.createElement('div');
+            loadMore.className = 'comment-load-more';
+            loadMore.innerHTML = '向下滑动查看更多留言 <i>↓</i>';
+            commentList.appendChild(loadMore);
+        })();
+    </script>
+</body>
+</html>
